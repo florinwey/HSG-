@@ -1,0 +1,145 @@
+import random
+
+#the main function 
+def main():
+    #create list for runtimes and dimensions
+    runtime_list = []
+    dimension_list = []
+
+    np_runtime_list = []
+    
+    #create two random matrices for multiplication
+    for n in range(100, 401, 100):
+        matrix_1, dimension = create_matrix(n)
+        matrix_2, dimension = create_matrix(n)
+
+        #find numpy runtime
+        np_start_time = time.time()
+        np.matmul(matrix_1, matrix_2)
+        np_end_time = time.time()
+        np_runtime = (np_end_time - np_start_time)
+        np_runtime_list.append(np_runtime)
+
+        runtime = matrix_multiplication(matrix_1, matrix_2, dimension)
+
+        runtime_list.append(runtime)
+        dimension_list.append(n)
+
+    #plot graph of my matrix multiplication    
+    plt.plot(dimension_list, runtime_list)
+    plt.xlabel("dimensions")
+    plt.ylabel("runtime")
+    plt.title("Graph Matrix Computation")
+    plt.show()
+
+    #plot graph of matrix multiplication with numpy
+    plt.plot(dimension_list, np_runtime_list)
+    plt.xlabel("dimensions")
+    plt.ylabel("runtime")
+    plt.title("Graph Matrix Computation with numpy")
+    plt.show()
+
+    matrix_3, dimension = create_matrix(2)
+    matrix_4, dimension = create_matrix(2)
+    c, stras_runtime = strassens_algorithm(matrix_3, matrix_4, dimension)
+
+    #plot graph of matrix multiplication with strassens algo
+    plt.plot(dimension_list, stras_runtime)
+    plt.xlabel("dimensions")
+    plt.ylabel("runtime")
+    plt.title("Graph Matrix Computation with Strassens algo")
+    plt.show()
+    
+    
+        
+
+# a)
+def create_matrix(dimension):
+
+    new_matrix = []
+
+
+    #create a new matrix for each step
+    for i in range(dimension):
+        row = []
+            
+        for j in range(dimension):
+            row.append(random.randint(0, 9)) #add a random number between 0 and 9 for each entry in the matrix
+        new_matrix.append(row)
+
+    return new_matrix, dimension
+
+
+
+def matrix_multiplication(matrix_1, matrix_2, dimension):
+
+    start_time = time.time()
+    
+    final_matrix = []
+
+    #create a new matrix for each step
+    for _ in range(dimension):
+        row = [0] * dimension
+        final_matrix.append(row)
+
+    #add every value in the correct place after multiplication
+    for x in range(dimension):
+        for y in range(dimension):
+                for z in range(dimension):
+                    
+                    final_matrix[x][y] += matrix_1[x][z] * matrix_2[z][y]
+
+    end_time = time.time()
+    runtime = end_time - start_time
+    
+    return runtime
+
+#Strassens Algorithm non recursive
+def strassens_algorithm(matrix_3, matrix_4, dimension):
+
+    start_time = time.time()
+
+    #define input matrices
+    a = matrix_3
+    b = matrix_4
+    c = []
+
+    #strassens algorithmus non recursive
+    M1 = (a[0][0] + a[1][1]) * (b[0][0] + b[1][1])
+    M2 = (a[1][0] + a[1][1]) * (b[0][0])
+    M3 = (a[0][0]) * (b[0][1] - b[1][1])
+    M4 = (a[1][1]) * (b[1][0] -  b[0][0])
+    M5 = (a[0][0] + a[0][1]) * (b[1][1])
+    M6 = (a[1][0] - a[0][0]) * (b[0][0] + b[0][1])
+    M7 = (a[0][1] - a[1][1]) * (b[1][0] + b [1][1])
+
+    #append every result into an output matrix
+    c.append([M1 + M4 - M5 + M7, M3 + M5])
+    c.append([M2 + M4, M1 - M2 + M3 + M6])
+    print(c)
+    
+    end_time = time.time()
+    stras_runtime = end_time - start_time
+    
+    return c, stras_runtime
+
+#prepare a function that adds 1x1 entries
+def matrix_multiply(matrix_):
+    
+
+#Strassens algorithm recursive
+def recursive_strassens_algorithm(matrix_3, matrix_4, dimension):
+
+    a = matrix_3
+    b = matrix_4
+
+    #strassens algorithm recursive
+    M1 = recursive_strassens_algorithm(a[0][0] + a[1][1], b[0][0] + b[1][1], dimension // 2)
+    M2 = recursive_strassens_algorithm((a[1][0] + a[1][1]) * (b[0][0]))
+    M3 = recursive_strassens_algorithm((a[0][0]) * (b[0][1] - b[1][1]))
+    M4 = recursive_strassens_algorithm((a[1][1]) * (b[1][0] -  b[0][0]))
+    M5 = recursive_strassens_algorithm((a[0][0] + a[0][1]) * (b[1][1]))
+    M6 = recursive_strassens_algorithm((a[1][0] - a[0][0]) * (b[0][0] + b[0][1]))
+    M7 = recursive_strassens_algorithm((a[0][1] - a[1][1]) * (b[1][0] + b [1][1]))
+
+main()
